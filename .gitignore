@@ -12,3 +12,5 @@ tmp_web_env_dump.txt
 web/AGENTS.md
 web/CLAUDE.md
 web/AGENTS.md
+__pycache__/
+*.pyc
