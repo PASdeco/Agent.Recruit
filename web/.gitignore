@@ -39,7 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-tmp_web_env_dump.txt
-web/AGENTS.md
-web/CLAUDE.md
