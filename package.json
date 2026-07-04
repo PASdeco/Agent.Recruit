@@ -1,0 +1,25 @@
+{
+  "name": "agent-recruit",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "web",
+    "relayer"
+  ],
+  "scripts": {
+    "preflight:genskill": "tsx scripts/preflight-genskill.ts",
+    "sync-env": "tsx scripts/sync-env.ts",
+    "dev": "npm run sync-env && concurrently -n web,relayer -c green,cyan \"npm run dev:web\" \"npm run dev:relayer\"",
+    "dev:web": "npm run dev -w web",
+    "dev:relayer": "npm run dev -w relayer",
+    "build": "npm run build -w web && npm run build -w relayer",
+    "lint": "npm run lint -w web && npm run lint -w relayer",
+    "test": "npm run test -w web && npm run test -w relayer",
+    "deploy:studionet": "tsx scripts/deploy-studionet.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

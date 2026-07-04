@@ -1,0 +1,14 @@
+node_modules/
+web/.next/
+relayer/dist/
+web/.env.local
+relayer/.env
+relayer/.env.local
+relayer/.env.generated
+.dev.out.log
+.dev.err.log
+.cache/
+tmp_web_env_dump.txt
+web/AGENTS.md
+web/CLAUDE.md
+web/AGENTS.md
