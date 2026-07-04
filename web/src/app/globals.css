@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+:root {
+  --bg-void: #0a0e0c;
+  --bg-panel: #121815;
+  --bg-glass: rgba(20, 28, 25, 0.72);
+  --accent-emerald: #1fbf8f;
+  --accent-emerald-dim: #0f5c46;
+  --text-primary: #f4f6f5;
+  --text-muted: #8b978f;
+  --line-hairline: rgba(255, 255, 255, 0.08);
+  --glow-hero: radial-gradient(circle at top, rgba(31, 191, 143, 0.13), transparent 42%);
+}
+
+@theme inline {
+  --color-background: var(--bg-void);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  border-color: var(--line-hairline);
+}
+
+html {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    linear-gradient(180deg, rgba(10, 14, 12, 0.95) 0%, rgba(10, 14, 12, 1) 40%),
+    var(--glow-hero),
+    var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body), sans-serif;
+}
+
+a,
+button {
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-emerald);
+  outline-offset: 2px;
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(18, 24, 21, 0.95), rgba(18, 24, 21, 0.86));
+  border: 1px solid var(--line-hairline);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(18px);
+}
+
+.pulse-dots {
+  background-image:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0 1px, transparent 1px),
+    linear-gradient(180deg, rgba(31, 191, 143, 0.18), transparent);
+  background-size: 14px 14px, 100% 100%;
+  background-position: center, center;
+  mask-image: radial-gradient(circle at center, black 28%, transparent 76%);
+  opacity: 0.55;
+}
+
+.section-reveal {
+  animation: fade-up 700ms ease both;
+}
+
+.ticker-track {
+  animation: ticker 28s linear infinite;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 30px rgba(31, 191, 143, 0.08);
+}
+
+.status-dot {
+  box-shadow: 0 0 0 0 rgba(31, 191, 143, 0.32);
+  animation: pulse-ring 2.2s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(31, 191, 143, 0.26);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(31, 191, 143, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .section-reveal,
+  .ticker-track,
+  .status-dot {
+    animation: none;
+  }
+
+  a,
+  button {
+    transition: none;
+  }
+}
