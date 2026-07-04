@@ -1,0 +1,12 @@
+{
+  "network": "studionet",
+  "rpcUrl": "https://studio.genlayer.com/api",
+  "explorerUrl": "https://genlayer-explorer.vercel.app",
+  "relayerAddress": "0xD0b8aEEdf195499773415323cae517e5b8369F94",
+  "contracts": {
+    "talentRegistry": "0x907FD3204316EB328353e6CAeB9BaBC1CfFAb6cD",
+    "opportunityRegistry": "0x80888e1CaC0A45ca3022422B14895f4FD0039425",
+    "matchingEngine": "0x384E7Fa970616CeBDA0f60d0045D073c2396F0d5",
+    "teamFormation": "0x1844A82aCB45ee854027eD1261eC4D2d1927Ed17"
+  }
+}
