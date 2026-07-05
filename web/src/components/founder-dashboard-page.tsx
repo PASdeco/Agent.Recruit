@@ -8,6 +8,7 @@ import {
   getConnectedWalletAddress,
   getFounderDashboardData,
   getProfileById,
+  syncAutomation,
   subscribeWalletAddress,
   type FounderDashboardData,
   type OwnedProfile
@@ -172,6 +173,7 @@ export function FounderDashboardPage() {
   const [snapshot, setSnapshot] = useState<FounderDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [refreshTick, setRefreshTick] = useState(0);
   const [selectedProfile, setSelectedProfile] = useState<OwnedProfile | null>(null);
@@ -225,6 +227,33 @@ export function FounderDashboardPage() {
       } finally {
         if (isActive) {
           setIsLoading(false);
+        }
+      }
+
+      if (!isActive) {
+        return;
+      }
+
+      setIsSyncing(true);
+
+      try {
+        const automationResults = await syncAutomation(4, 1200, walletAddress);
+        const latestResult = automationResults[automationResults.length - 1];
+        if (latestResult?.status === "disabled") {
+          return;
+        }
+
+        const refreshedSnapshot = await getFounderDashboardData(walletAddress);
+        if (isActive) {
+          setSnapshot(refreshedSnapshot);
+        }
+      } catch (error) {
+        if (isActive) {
+          setErrorMessage(error instanceof Error ? error.message : "Automation could not refresh your founder dashboard.");
+        }
+      } finally {
+        if (isActive) {
+          setIsSyncing(false);
         }
       }
     }
@@ -320,9 +349,14 @@ export function FounderDashboardPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--line-hairline)] px-4 py-2.5 text-sm text-[var(--text-muted)]"
               >
                 <RefreshCcw className="h-4 w-4" />
-                Refresh view
+                {isSyncing ? "Refreshing..." : "Refresh view"}
               </button>
             </div>
+            {isSyncing ? (
+              <p className="mt-4 text-sm leading-7 text-[var(--text-muted)]">
+                Automation is reconciling match records and team drafts onchain...
+              </p>
+            ) : null}
             {errorMessage ? <p className="mt-4 text-sm leading-7 text-[#ff9b9b]">{errorMessage}</p> : null}
           </div>
         </div>

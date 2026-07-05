@@ -7,6 +7,7 @@ import {
   connectWallet,
   getConnectedWalletAddress,
   getPersonalDashboardData,
+  syncAutomation,
   subscribeWalletAddress,
   type MatchRecord,
   type PersonalDashboardData
@@ -28,6 +29,7 @@ export function PersonalDashboardPage() {
   const [snapshot, setSnapshot] = useState<PersonalDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [refreshTick, setRefreshTick] = useState(0);
 
@@ -78,6 +80,33 @@ export function PersonalDashboardPage() {
       } finally {
         if (isActive) {
           setIsLoading(false);
+        }
+      }
+
+      if (!isActive) {
+        return;
+      }
+
+      setIsSyncing(true);
+
+      try {
+        const automationResults = await syncAutomation(4, 1200, walletAddress);
+        const latestResult = automationResults[automationResults.length - 1];
+        if (latestResult?.status === "disabled") {
+          return;
+        }
+
+        const refreshedSnapshot = await getPersonalDashboardData(walletAddress);
+        if (isActive) {
+          setSnapshot(refreshedSnapshot);
+        }
+      } catch (error) {
+        if (isActive) {
+          setErrorMessage(error instanceof Error ? error.message : "Automation could not refresh your dashboard.");
+        }
+      } finally {
+        if (isActive) {
+          setIsSyncing(false);
         }
       }
     }
@@ -155,9 +184,14 @@ export function PersonalDashboardPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--line-hairline)] px-4 py-2.5 text-sm text-[var(--text-muted)]"
               >
                 <RefreshCcw className="h-4 w-4" />
-                Refresh view
+                {isSyncing ? "Refreshing..." : "Refresh view"}
               </button>
             </div>
+            {isSyncing ? (
+              <p className="mt-4 text-sm leading-7 text-[var(--text-muted)]">
+                Automation is reconciling profile review and match records onchain...
+              </p>
+            ) : null}
             {errorMessage ? <p className="mt-4 text-sm leading-7 text-[#ff9b9b]">{errorMessage}</p> : null}
           </div>
         </div>
