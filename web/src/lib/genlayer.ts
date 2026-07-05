@@ -126,6 +126,14 @@ export type FounderDashboardData = {
   opportunities: Array<OwnedOpportunity & { matches: MatchRecord[]; teamDraft: TeamDraft | null }>;
 };
 
+type AutomationStepResult = {
+  status: "accepted" | "noop" | "disabled" | "error";
+  action: "profile-review" | "match-refresh" | "team-draft" | "none";
+  message: string;
+  hash?: string;
+  targetId?: number;
+};
+
 const env = {
   rpcUrl: process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api",
   talentRegistry: process.env.NEXT_PUBLIC_TALENT_REGISTRY_ADDRESS || "",
@@ -280,6 +288,12 @@ function createReadClient() {
   });
 }
 
+function wait(durationMs: number) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, durationMs);
+  });
+}
+
 async function readJson<T>(address: string, functionName: string, fallback: T, args: Array<string | number> = []) {
   if (!address) {
     return fallback;
@@ -323,6 +337,44 @@ async function createWriteClient() {
   });
 }
 
+export async function syncAutomation(rounds = 1, delayMs = 1200, ownerAddress = "") {
+  if (typeof window === "undefined") {
+    return [] as AutomationStepResult[];
+  }
+
+  const actions: AutomationStepResult[] = [];
+
+  for (let index = 0; index < rounds; index += 1) {
+    const response = await fetch("/api/automation/run", {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        ownerAddress
+      })
+    });
+
+    const result = (await response.json()) as AutomationStepResult;
+    if (!response.ok || result.status === "error") {
+      throw new Error(result.message || "Automation request failed.");
+    }
+
+    actions.push(result);
+
+    if (result.status === "noop" || result.status === "disabled") {
+      break;
+    }
+
+    if (index < rounds - 1) {
+      await wait(delayMs);
+    }
+  }
+
+  return actions;
+}
+
 export async function submitProfileWrite(profile: ProfileInput) {
   if (!env.talentRegistry) {
     throw new Error("Talent registry address is not configured.");
@@ -357,6 +409,8 @@ export async function submitProfileWrite(profile: ProfileInput) {
     status: TransactionStatus.ACCEPTED
   });
 
+  void syncAutomation(3, 1200, getStoredWalletAddress()).catch(() => undefined);
+
   return { hash };
 }
 
@@ -389,6 +443,8 @@ export async function submitOpportunityWrite(opportunity: OpportunityInput) {
     hash,
     status: TransactionStatus.ACCEPTED
   });
+
+  void syncAutomation(3, 1200, getStoredWalletAddress()).catch(() => undefined);
 
   return { hash };
 }

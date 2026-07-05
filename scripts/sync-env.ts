@@ -38,6 +38,7 @@ function readEnvFile(filePath: string) {
   }
 }
 
+const existingWebEnv = readEnvFile(webEnvPath);
 const existingRelayerEnv = readEnvFile(relayerEnvPath);
 const relayerAccountAddress =
   process.env.RELAYER_ACCOUNT_ADDRESS ||
@@ -51,7 +52,10 @@ const envLines = [
   `NEXT_PUBLIC_TALENT_REGISTRY_ADDRESS=${deployment.contracts.talentRegistry}`,
   `NEXT_PUBLIC_OPPORTUNITY_REGISTRY_ADDRESS=${deployment.contracts.opportunityRegistry}`,
   `NEXT_PUBLIC_MATCHING_ENGINE_ADDRESS=${deployment.contracts.matchingEngine}`,
-  `NEXT_PUBLIC_TEAM_FORMATION_ADDRESS=${deployment.contracts.teamFormation}`
+  `NEXT_PUBLIC_TEAM_FORMATION_ADDRESS=${deployment.contracts.teamFormation}`,
+  ...Object.entries(existingWebEnv)
+    .filter(([key]) => !key.startsWith("NEXT_PUBLIC_"))
+    .map(([key, value]) => `${key}=${value}`)
 ];
 
 writeFileSync(webEnvPath, `${envLines.join("\n")}\n`, "utf8");

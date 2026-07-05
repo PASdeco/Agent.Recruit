@@ -24,6 +24,12 @@ const readClient = createClient({
   endpoint: relayerConfig.GENLAYER_RPC_URL
 });
 
+const acceptanceWait = {
+  status: TransactionStatus.ACCEPTED,
+  interval: 5000,
+  retries: 72
+} as const;
+
 const writeClient = relayerConfig.RELAYER_PRIVATE_KEY
   ? createClient({
       chain: studionet,
@@ -62,7 +68,7 @@ async function writeCall(contract: ContractName, method: string, args: ContractA
 
   await readClient.waitForTransactionReceipt({
     hash,
-    status: TransactionStatus.ACCEPTED
+    ...acceptanceWait
   });
 
   return hash;
