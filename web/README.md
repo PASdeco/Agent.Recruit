@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agent.Recruit Web
 
-## Getting Started
+> The premium frontend for Agent.Recruit. It turns live GenLayer state into a public network story, signed creation flows, and wallet-scoped private dashboards.
 
-First, run the development server:
+## What lives here
+
+This workspace does three jobs at once:
+
+1. It sells the product properly.
+   The landing page frames Agent.Recruit as a consensus-native talent network instead of a generic recruitment tool.
+
+2. It handles the signed user actions.
+   Talent can create profiles. Founders can post opportunities. Those writes go onchain through an injected wallet.
+
+3. It makes automation visible.
+   The app reads live contract state, shows recent match activity, and exposes wallet-owned dashboard views for both builders and founders.
+
+## Main surfaces
+
+- `/` - landing page, network snapshot, live deployment context, and recent activity.
+- `/app/talent` - create a structured onchain talent profile.
+- `/app/opportunities` - post a structured founder opportunity.
+- `/app/personal` - wallet-owned profile dashboard and accepted matches.
+- `/app/founder` - wallet-owned opportunity dashboard, incoming matches, and draft teams.
+- `/api/automation/run` - server route that triggers a prioritized automation step for the active user flow.
+
+## Product rules the UI makes explicit
+
+- Profile and opportunity writes are signed.
+- Profile review, match refresh, and team generation are automated.
+- The product shows outcomes such as tiers, fit bands, and synced timestamps.
+- The product does not expose hidden validator reasoning as if it were the product itself.
+
+## Local development
+
+From the repo root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run sync-env
+npm run dev:web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or from inside this workspace:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app runs at `http://localhost:3000`.
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+The frontend expects these values:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `NEXT_PUBLIC_GENLAYER_NETWORK`
+- `NEXT_PUBLIC_GENLAYER_RPC_URL`
+- `NEXT_PUBLIC_TALENT_REGISTRY_ADDRESS`
+- `NEXT_PUBLIC_OPPORTUNITY_REGISTRY_ADDRESS`
+- `NEXT_PUBLIC_MATCHING_ENGINE_ADDRESS`
+- `NEXT_PUBLIC_TEAM_FORMATION_ADDRESS`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Most of the time you should not hand-edit them. Run `npm run sync-env` at the repo root and let the repo rebuild [`web/.env.local`](./.env.local) from the deployment file.
 
-## Deploy on Vercel
+If you want the in-app automation endpoint to submit writes as well, the web server also needs:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `RELAYER_ACCOUNT_ADDRESS`
+- `RELAYER_PRIVATE_KEY`
+- `TALENT_REGISTRY_ADDRESS`, `OPPORTUNITY_REGISTRY_ADDRESS`, `MATCHING_ENGINE_ADDRESS`, and `TEAM_FORMATION_ADDRESS`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Commands
+
+- `npm run dev` - start the Next.js app
+- `npm run build` - production build
+- `npm run start` - serve the production build
+- `npm run lint` - run ESLint
+- `npm run test` - run Vitest
+
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- `genlayer-js` for chain reads and writes
+- Vitest + Testing Library for frontend tests
+
+## Notes
+
+Wallet connection logic prefers a usable injected provider, attempts to switch the wallet onto Studionet, and stores the active address locally so the personal and founder dashboards can reopen with context.
+
+This workspace is not a static marketing shell. It is the live lens over the network.
