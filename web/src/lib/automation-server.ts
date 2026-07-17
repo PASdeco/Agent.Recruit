@@ -242,6 +242,30 @@ function ownerPriority(ownerAddress: string | undefined, candidateOwner: string)
   return candidateOwner.toLowerCase() === ownerAddress.toLowerCase() ? 1 : 0;
 }
 
+function isPublicUrl(value: string) {
+  return /^https?:\/\//i.test(value.trim());
+}
+
+function countPublicProofUrls(profile: OwnedProfile) {
+  const urls = new Set<string>();
+
+  for (const value of [
+    profile.githubUrl,
+    profile.resumeUrl,
+    profile.portfolioUrl,
+    profile.linkedinUrl,
+    ...profile.socials,
+    ...profile.evidence.map((item) => item.value)
+  ]) {
+    const normalized = String(value || "").trim();
+    if (isPublicUrl(normalized)) {
+      urls.add(normalized);
+    }
+  }
+
+  return urls.size;
+}
+
 export async function runAutomationStep(priority: AutomationPriority = {}): Promise<AutomationAction> {
   if (!hasAutomationConfig()) {
     return {
@@ -273,17 +297,15 @@ export async function runAutomationStep(priority: AutomationPriority = {}): Prom
     })[0];
 
   if (pendingReview) {
+    const proofUrlCount = countPublicProofUrls(pendingReview);
+
     const hash = await writeAcceptedTransaction(readClient, writeClient, "talentRegistry", "request_profile_review", [
       pendingReview.profileId,
       [
         `Skills: ${pendingReview.skills.join(", ")}`,
         `Role preferences: ${pendingReview.rolePreferences.join(", ")}`,
-        `GitHub: ${pendingReview.githubUrl || "not provided"}`,
-        `Resume: ${pendingReview.resumeUrl || "not provided"}`,
-        `Portfolio: ${pendingReview.portfolioUrl || "not provided"}`,
-        `LinkedIn: ${pendingReview.linkedinUrl || "not provided"}`,
-        `Socials: ${pendingReview.socials.length > 0 ? pendingReview.socials.join(", ") : "not provided"}`,
-        `Evidence: ${pendingReview.evidence.map((item) => `${item.label}=${item.value}`).join(" | ")}`
+        `Public proof URL count: ${proofUrlCount}`,
+        "Render pattern: TalentRegistry renders stored public proof URLs with gl.nondet.web.render before AI review"
       ].join(" | "),
       `Handle: ${pendingReview.handle} | Headline: ${pendingReview.headline} | Availability: ${pendingReview.availability} | Location: ${pendingReview.location}`
     ]);

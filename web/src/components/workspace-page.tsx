@@ -435,12 +435,12 @@ export function WorkspacePage({ section }: { section: Section }) {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="font-mono text-sm uppercase tracking-[0.18em] text-[var(--text-muted)]">Evidence Pack</p>
-                    <h3 className="mt-2 text-xl font-medium">Proof links for validator review</h3>
+                    <h3 className="mt-2 text-xl font-medium">Public proof links for rendered review</h3>
                   </div>
                   <ActionBadge kind="sign" />
                 </div>
                 <p className="mt-3 text-base leading-8 text-[var(--text-muted)]">
-                  GitHub, resume, socials, and supporting proof are part of the onchain profile payload that validators review for tiering and matching.
+                  GitHub, resume, socials, and supporting proof are stored onchain, then rendered by GenLayer contracts before tiering and matching.
                 </p>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <label className="grid gap-2">

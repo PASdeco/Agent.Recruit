@@ -11,12 +11,12 @@ const talentCards = [
   {
     title: "Basic",
     copy: "Start with your essentials and register your onchain talent identity.",
-    features: ["Wallet ownership", "Headline and role preferences", "Initial evidence links"]
+    features: ["Wallet ownership", "Headline and role preferences", "Initial public proof links"]
   },
   {
     title: "Verified",
-    copy: "Add stronger evidence so the network can validate real execution signals.",
-    features: ["GitHub + portfolio proof", "Expanded skills evidence", "Consensus-reviewed tier"]
+    copy: "Add stronger public proof so the network can render and validate real execution signals.",
+    features: ["Rendered GitHub + portfolio proof", "Expanded skills evidence", "Consensus-reviewed tier"]
   },
   {
     title: "Elite Builder",
@@ -56,7 +56,7 @@ export default async function Home() {
               Where Consensus Finds Talent.
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text-muted)] sm:text-xl">
-              Agent.Recruit evaluates real evidence, not keyword stuffing. Talent and opportunities live onchain,
+              Agent.Recruit evaluates rendered public evidence, not keyword stuffing. Talent and opportunities live onchain,
               while GenLayer validators score fit, refresh recommendations, and assemble draft teams in the background.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -390,7 +390,7 @@ export default async function Home() {
               Recruitment quality is subjective. Consensus makes that a feature, not a flaw.
             </h2>
             <p className="mt-4 text-[var(--text-muted)]">
-              Profiles, evidence, and opportunity structure deserve more than single-model keyword scoring. Agent.Recruit uses independent validators
+              Profiles, rendered evidence, and opportunity structure deserve more than single-model keyword scoring. Agent.Recruit uses independent validators
               to produce shared, onchain outcomes for tiers, fit scores, and team drafts.
             </p>
             <div className="mt-8 flex items-center justify-center gap-4 text-[var(--accent-emerald)]">
