@@ -12,7 +12,26 @@ def test_match_record_persists(direct_vm, direct_deploy, direct_alice):
             11,
             2,
             3,
-            json.dumps({"handle": "nkechi.build"}),
+            json.dumps(
+                {
+                    "profileId": 1,
+                    "handle": "nkechi.build",
+                    "headline": "Consensus-native frontend engineer",
+                    "summary": "Builds trusted interfaces",
+                    "skills": ["React", "TypeScript", "GenLayer"],
+                    "rolePreferences": ["Frontend Lead"],
+                    "availability": "Full time",
+                    "location": "Remote",
+                    "githubUrl": "https://github.com/example",
+                    "resumeUrl": "https://resume.example/nkechi.pdf",
+                    "portfolioUrl": "https://portfolio.example",
+                    "linkedinUrl": "https://linkedin.com/in/example",
+                    "socials": ["https://x.com/nkechi"],
+                    "evidence": [{"label": "Hackathon", "value": "https://portfolio.example/hackathon"}],
+                    "tier": "Verified",
+                    "reviewStatus": "Matches Ready",
+                }
+            ),
             json.dumps({"title": "Frontend Lead"}),
         )
     )
