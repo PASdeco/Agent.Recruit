@@ -74,6 +74,30 @@ async function writeCall(contract: ContractName, method: string, args: ContractA
   return hash;
 }
 
+function isPublicUrl(value: string) {
+  return /^https?:\/\//i.test(value.trim());
+}
+
+function countPublicProofUrls(profile: Profile) {
+  const urls = new Set<string>();
+
+  for (const value of [
+    profile.githubUrl,
+    profile.resumeUrl,
+    profile.portfolioUrl,
+    profile.linkedinUrl,
+    ...profile.socials,
+    ...profile.evidence.map((item) => item.value)
+  ]) {
+    const normalized = String(value || "").trim();
+    if (isPublicUrl(normalized)) {
+      urls.add(normalized);
+    }
+  }
+
+  return urls.size;
+}
+
 export async function listProfiles() {
   const result = await jsonCall("talentRegistry", "list_profiles");
   return JSON.parse(String(result ?? "[]")) as Profile[];
@@ -102,17 +126,15 @@ export async function listMatchesForOpportunity(opportunityId: number) {
 }
 
 export async function requestProfileReview(profile: Profile) {
+  const proofUrlCount = countPublicProofUrls(profile);
+
   return writeCall("talentRegistry", "request_profile_review", [
     profile.profileId,
     [
       `Skills: ${profile.skills.join(", ")}`,
       `Role preferences: ${profile.rolePreferences.join(", ")}`,
-      `GitHub: ${profile.githubUrl || "not provided"}`,
-      `Resume: ${profile.resumeUrl || "not provided"}`,
-      `Portfolio: ${profile.portfolioUrl || "not provided"}`,
-      `LinkedIn: ${profile.linkedinUrl || "not provided"}`,
-      `Socials: ${profile.socials.length > 0 ? profile.socials.join(", ") : "not provided"}`,
-      `Evidence: ${profile.evidence.map((item) => `${item.label}=${item.value}`).join(" | ")}`
+      `Public proof URL count: ${proofUrlCount}`,
+      "Render pattern: TalentRegistry renders stored public proof URLs with gl.nondet.web.render before AI review"
     ].join(" | "),
     `Handle: ${profile.handle} | Headline: ${profile.headline} | Availability: ${profile.availability} | Location: ${profile.location}`
   ]);
