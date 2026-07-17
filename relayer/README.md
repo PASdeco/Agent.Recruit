@@ -14,6 +14,8 @@ What the relayer does own is the follow-through:
 
 In practice, that means the relayer is the bridge between "someone wrote to the registries" and "the network has now caught up around that write."
 
+The relayer does not pre-render or summarize proof URLs for AI review. It only triggers the automation call. The GenLayer contracts read the stored public proof URLs and render them with `gl.nondet.web.render(...)` during nondeterministic execution before the prompt reasons about the evidence.
+
 ## Automation order
 
 Every cycle runs the same three-stage loop:

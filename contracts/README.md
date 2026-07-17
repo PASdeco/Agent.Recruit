@@ -6,7 +6,7 @@
 
 | Contract | Responsibility |
 | --- | --- |
-| `talent_registry.py` | Wallet-owned talent profiles, evidence payloads, versioning, and review status |
+| `talent_registry.py` | Wallet-owned talent profiles, public proof URL rendering, versioning, and review status |
 | `opportunity_registry.py` | Wallet-owned founder opportunities, slot structure, and archive state |
 | `matching_engine.py` | Consensus fit scoring, persistent match records, and recent activity feed |
 | `team_formation.py` | Best-current slot assignment and draft team generation |
@@ -24,9 +24,10 @@ That is why owner checks protect profile and opportunity updates, while relayer 
 
 ### Talent Registry
 
-- Creates a profile with structured evidence and metadata.
+- Creates a profile with structured evidence, metadata, and public proof URLs.
 - Tracks `version`, `createdAt`, `updatedAt`, and `reviewedAt`.
 - Lets the relayer call `request_profile_review` to move a profile into a reviewed tier.
+- Renders stored HTTP(S) proof URLs with `gl.nondet.web.render(...)` inside nondeterministic execution before the profile-review prompt uses them.
 
 ### Opportunity Registry
 
@@ -37,6 +38,7 @@ That is why owner checks protect profile and opportunity updates, while relayer 
 ### Matching Engine
 
 - Accepts focused pair requests from the relayer.
+- Renders candidate public proof URLs with `gl.nondet.web.render(...)` before scoring a profile-opportunity pair.
 - Stores persistent `MatchRecord` objects keyed by `profileId:opportunityId`.
 - Maintains profile and opportunity indexes plus a recent public activity feed.
 

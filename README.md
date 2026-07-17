@@ -24,7 +24,7 @@ Most recruiting products are really search boxes with nice branding. They reward
 
 Agent.Recruit takes a different path.
 
-A builder signs an onchain talent profile with real proof: skills, role preferences, GitHub, resume, portfolio, socials, and extra evidence. A founder signs an onchain opportunity with an actual role structure: mission, skills, commitment, and the exact slots to fill.
+A builder signs an onchain talent profile with real proof: skills, role preferences, GitHub, resume, portfolio, socials, and extra public evidence links. A founder signs an onchain opportunity with an actual role structure: mission, skills, commitment, and the exact slots to fill.
 
 Then the network does the judgment work.
 
@@ -91,7 +91,7 @@ Signed profile/opportunity writes -> onchain registries -> relayer automation ->
 
 ### 1. Talent creates a profile
 
-The builder signs a profile write with handle, headline, summary, skills, role preferences, availability, location, and supporting proof links.
+The builder signs a profile write with handle, headline, summary, skills, role preferences, availability, location, and supporting public proof links.
 
 ### 2. Founder posts an opportunity
 
@@ -99,11 +99,11 @@ The founder signs an opportunity with mission, summary, required skills, compens
 
 ### 3. The relayer reviews the profile
 
-If a profile is new or updated, the relayer submits `request_profile_review`, which promotes the profile into a consensus-reviewed tier such as `Basic`, `Verified`, or `EliteBuilder`.
+If a profile is new or updated, the relayer submits `request_profile_review`, which promotes the profile into a consensus-reviewed tier such as `Basic`, `Verified`, or `EliteBuilder`. The contract extracts public HTTP(S) proof URLs from the stored profile and renders them with `gl.nondet.web.render(...)` before the prompt reasons about the evidence.
 
 ### 4. The relayer refreshes focused pairs
 
-The relayer compares active opportunities against candidate profiles. If a pair is missing or stale, it submits `request_match` and persists a fresh `MatchRecord`.
+The relayer compares active opportunities against candidate profiles. If a pair is missing or stale, it submits `request_match` and persists a fresh `MatchRecord`. The matching contract renders the candidate's public proof URLs with `gl.nondet.web.render(...)` and gives the AI prompt rendered artifacts, not raw links as evidence.
 
 ### 5. The relayer drafts a team
 
